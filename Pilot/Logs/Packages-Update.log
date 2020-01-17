@@ -41,3 +41,13 @@ The following packages were added:
   com.unity.modules.vr@1.0.0
   com.unity.modules.wind@1.0.0
   com.unity.modules.xr@1.0.0
+
+=== Thu Jan 16 18:15:43 2020
+
+Packages were changed.
+Update Mode: resetToDefaultDependencies
+
+The following packages were added:
+  com.unity.textmeshpro@1.4.1
+The following packages were removed:
+  com.unity.cinemachine@2.4.0
