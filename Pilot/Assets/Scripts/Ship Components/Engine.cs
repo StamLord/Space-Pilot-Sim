@@ -42,34 +42,29 @@ public class Engine : Component
         
     }
     
-    public bool Accelerate()
+    public void Accelerate()
     {
-        if(functional == false) return false;
+        if(functional == false) return;
 
         throttle += acceleration * Time.deltaTime;
         
         if(OnThrottleChange != null)
             OnThrottleChange(throttle, throttle * maximumSpeed);
-
-        return true;
     }
 
-    public bool Deccelerate()
+    public void Deccelerate()
     {
-        if(functional == false) return false;
+        if(functional == false) return;
 
         throttle -= decceleration * Time.deltaTime;
 
         if(OnThrottleChange != null)
             OnThrottleChange(throttle, throttle * maximumSpeed);
-
-        return true;
     }
 
     void FixedUpdate()
     {
         Vector3 force = CalculateForce();
-        Debug.Log(force);
         rb.AddRelativeForce(force, ForceMode.Force);
         Debug.DrawRay(transform.position, force, Color.red, 1);
     }

@@ -27,13 +27,12 @@ public class Brakes : Component
         }
     }
 
-    bool Brake()
+    void Brake()
     {
-        if(functional == false) return false;
+        if(functional == false) return;
 
         engine.Deccelerate();
         rb.AddForce(-brakeForce * rb.velocity);
         Debug.DrawRay(transform.position, -brakeForce * rb.velocity, Color.blue, 1);
-        return true;
     }
 }

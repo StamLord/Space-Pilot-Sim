@@ -5,11 +5,17 @@ using UnityEngine;
 public class Steering : Component
 {
     public PilotInterface pi;
+    public Rigidbody rb;
+
     public float rollForce = 10f;
     public float pitchForce = 10f;
+    public float yawForce = 10f;
 
     void Awake()
     {
+        if(rb == null)
+            rb = GetComponent<Rigidbody>();
+
         if(pi == null)
             pi = GetComponent<PilotInterface>();
 
@@ -17,25 +23,29 @@ public class Steering : Component
         {
             pi.OnRoll += Roll;
             pi.OnPitch += Pitch;
+            pi.OnYaw += Yaw;
         }
     }
 
-    bool Roll(float roll)
+    void Roll(float roll)
     {
-        if(functional == false) return false;
+        if(functional == false || rb == null) return;
 
-        transform.Rotate(new Vector3(0,0,rollForce * roll * Time.deltaTime), Space.Self);
-        transform.Rotate(new Vector3(0,0,rollForce * roll * Time.deltaTime), Space.Self);
-        return true;
+        rb.AddTorque(rollForce * transform.forward * -roll, ForceMode.Force);
     }
 
-    bool Pitch(float pitch)
+    void Pitch(float pitch)
     {
-        if(functional == false) return false;
+        if(functional == false || rb == null) return;
 
-        transform.Rotate(new Vector3(pitchForce * pitch * Time.deltaTime,0,0), Space.Self);
-        transform.Rotate(new Vector3(pitchForce * pitch * Time.deltaTime,0,0), Space.Self);
-        return true;
+        rb.AddTorque(pitchForce * transform.right * pitch, ForceMode.Force);
+    }
+
+    void Yaw(float yaw)
+    {
+        if(functional == false || rb == null) return;
+
+        rb.AddTorque(yawForce * transform.up * yaw, ForceMode.Force);
     }
 
 }
