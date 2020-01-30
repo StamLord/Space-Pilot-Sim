@@ -81,7 +81,7 @@ public class Engine : Component
 
     Vector3 CalculateForce()
     {
-        float difference = throttle * maximumSpeed - transform.InverseTransformVector(rb.velocity).z;
+        float difference = throttle * maximumSpeed / rb.mass - transform.InverseTransformVector(rb.velocity).z;
         return Vector3.forward * difference;
     }
 
