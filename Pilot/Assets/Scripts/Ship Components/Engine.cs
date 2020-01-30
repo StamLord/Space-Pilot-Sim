@@ -38,6 +38,7 @@ public class Engine : Component
         {
             pi.OnAccelerate += Accelerate;
             pi.OnDeccelerate += Deccelerate;
+            pi.OnSetThrottle += SetThrottle;
         }
         
     }
@@ -66,10 +67,16 @@ public class Engine : Component
         return true;
     }
 
+    private void SetThrottle(float precentage)
+    {
+        throttle = precentage;
+        if(OnThrottleChange != null)
+            OnThrottleChange(throttle, throttle * maximumSpeed);
+    }
+
     void FixedUpdate()
     {
         Vector3 force = CalculateForce();
-        Debug.Log(force);
         rb.AddRelativeForce(force, ForceMode.Force);
         Debug.DrawRay(transform.position, force, Color.red, 1);
     }

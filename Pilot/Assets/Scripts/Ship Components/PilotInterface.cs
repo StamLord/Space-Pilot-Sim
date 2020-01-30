@@ -20,6 +20,9 @@ public class PilotInterface : MonoBehaviour
     public delegate bool BrakeDelegate();
     public event BrakeDelegate OnBrake;
 
+    public delegate void SetThrottleDelegate(float precentage);
+    public event SetThrottleDelegate OnSetThrottle;
+
     void FixedUpdate()
     {
         if(Input.GetKey(KeyCode.W))
@@ -43,5 +46,12 @@ public class PilotInterface : MonoBehaviour
                 OnBrake();
         }
 
+    }
+
+    public void HiJack(float setThrottle)
+    {
+        Debug.Log("Hijacked");
+        if(OnSetThrottle != null)
+            OnSetThrottle(setThrottle);
     }
 }
