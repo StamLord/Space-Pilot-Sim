@@ -20,6 +20,12 @@ public class PilotInterface : MonoBehaviour
     public delegate bool BrakeDelegate();
     public event BrakeDelegate OnBrake;
 
+    public delegate void CommunicationDelegate();
+    public event CommunicationDelegate OnCommunication;
+
+    public delegate void LockTargetDelegate();
+    public event LockTargetDelegate OnLockTarget;
+
     void FixedUpdate()
     {
         if(Input.GetKey(KeyCode.W))
@@ -42,6 +48,12 @@ public class PilotInterface : MonoBehaviour
             if(OnBrake != null)
                 OnBrake();
         }
+
+        if(Input.GetKeyDown(KeyCode.C))
+            if(OnCommunication != null) OnCommunication();
+
+        if(Input.GetKeyDown(KeyCode.T))
+            if(OnLockTarget != null) OnLockTarget();
 
     }
 }

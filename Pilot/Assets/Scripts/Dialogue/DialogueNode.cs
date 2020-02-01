@@ -3,10 +3,13 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class DialogueNode
-{
+{   
+    /// Text displayed in the choice list
     private string _choice;
+    /// Text displayed when node is chosen
     private string _message;
     public string message { get{ return _message; }}
+    /// Connected nodes that are displayed as choices
     private DialogueNode[] next = new DialogueNode[0];
 
     public DialogueNode(string _message)
