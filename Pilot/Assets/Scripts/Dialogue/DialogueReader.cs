@@ -5,6 +5,8 @@ using UnityEngine.UI;
 
 public class DialogueReader : MonoBehaviour
 {
+    public Character player;
+
     public Text messageBody;
     public Text[] choices;
 
@@ -22,7 +24,7 @@ public class DialogueReader : MonoBehaviour
             instance = this;
         else
         {
-            Debug.LogWarning("More than 1 instancve of DialogueReader exists!");
+            Debug.LogWarning("More than 1 instance of DialogueReader exists!");
             Destroy(this.gameObject);
         }
     }
@@ -31,7 +33,7 @@ public class DialogueReader : MonoBehaviour
     void Start()
     {
         DialogueNode o1 = new DialogueNode("Request Landing", "Rejected");
-        DialogueNode o21 = new DialogueNode("Information 1", "Here");
+        DialogueNode o21 = new DialogueNode("Information 1", "Here", null, new Stat(StatName.CHARISMA, 1));
         DialogueNode o22 = new DialogueNode("Information 2", "Here");
         DialogueNode o23 = new DialogueNode("Information 3", "Here");
         DialogueNode o2 = new DialogueNode("Ask for information", "Which Information would you want?", new DialogueNode[] {o21, o22, o23});
@@ -56,7 +58,7 @@ public class DialogueReader : MonoBehaviour
         awaitingInput = false;
         
         DrawMessage(activeNode.message);
-        DrawOptions(activeNode.GetOptions());
+        DrawOptions(activeNode.GetOptions(player));
         
         awaitingInput = true;
     }
