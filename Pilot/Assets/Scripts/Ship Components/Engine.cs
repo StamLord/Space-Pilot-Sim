@@ -38,6 +38,7 @@ public class Engine : Component
         {
             pi.OnAccelerate += Accelerate;
             pi.OnDeccelerate += Deccelerate;
+            pi.OnSetThrottle += SetThrottle;
         }
         
     }
@@ -58,6 +59,13 @@ public class Engine : Component
 
         throttle -= decceleration * Time.deltaTime;
 
+        if(OnThrottleChange != null)
+            OnThrottleChange(throttle, throttle * maximumSpeed);
+    }
+
+    private void SetThrottle(float precentage)
+    {
+        throttle = precentage;
         if(OnThrottleChange != null)
             OnThrottleChange(throttle, throttle * maximumSpeed);
     }
