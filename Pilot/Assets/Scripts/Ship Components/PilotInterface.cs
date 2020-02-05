@@ -71,6 +71,12 @@ public class PilotInterface : MonoBehaviour
         }
     }
 
+    public delegate void CommunicationDelegate();
+    public event CommunicationDelegate OnCommunication;
+
+    public delegate void LockTargetDelegate();
+    public event LockTargetDelegate OnLockTarget;
+
     void FixedUpdate()
     {
         // Throttle
@@ -136,6 +142,12 @@ public class PilotInterface : MonoBehaviour
             if(OnBrake != null)
                 OnBrake();
         }
+
+        if(Input.GetKeyDown(KeyCode.C))
+            if(OnCommunication != null) OnCommunication();
+
+        if(Input.GetKeyDown(KeyCode.T))
+            if(OnLockTarget != null) OnLockTarget();
 
     }
 
