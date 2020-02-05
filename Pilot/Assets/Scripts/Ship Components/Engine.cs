@@ -73,6 +73,7 @@ public class Engine : Component
     void FixedUpdate()
     {
         Vector3 force = CalculateForce();
+
         rb.AddRelativeForce(force, ForceMode.Force);
         Debug.DrawRay(transform.position, force, Color.red, 1);
     }
