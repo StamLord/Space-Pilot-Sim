@@ -77,6 +77,9 @@ public class PilotInterface : MonoBehaviour
     public delegate void LockTargetDelegate();
     public event LockTargetDelegate OnLockTarget;
 
+    public delegate void ExitDelegate();
+    public event ExitDelegate OnExit;
+
     void FixedUpdate()
     {
         // Throttle
@@ -148,6 +151,9 @@ public class PilotInterface : MonoBehaviour
 
         if(Input.GetKeyDown(KeyCode.T))
             if(OnLockTarget != null) OnLockTarget();
+        
+        if(Input.GetKeyDown(KeyCode.F))
+            if(OnExit != null) OnExit();
 
     }
 

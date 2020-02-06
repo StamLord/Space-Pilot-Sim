@@ -12,6 +12,9 @@ public class Character : MonoBehaviour
     [SerializeField] private int nextLevel = 100;
     [SerializeField] private int level;
 
+    [SerializeField] private int maxHealth = 100;
+    [SerializeField] private int health = 100;
+
     [Space(10)]
 
     [SerializeField] private int statPointsPerLevel = 2;
@@ -72,5 +75,19 @@ public class Character : MonoBehaviour
         }
         else
             return false;
+    }
+
+    public void Damage(int amount)
+    {
+        if(amount < 0)
+            Debug.LogWarning("Doing negative damage results in healing");
+        health -= amount;
+    }
+
+    public void Heal(int amount)
+    {
+        if(amount < 0)
+            Debug.LogWarning("Doing negative healing results in damage");
+        health += amount;
     }
 }

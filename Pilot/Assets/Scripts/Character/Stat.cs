@@ -29,12 +29,13 @@ public class Stat
     public Stat(StatName name, int level)
     {
         _name = name;
-        _level = level;
+        _level = Mathf.Max(0, level);
     }
 
     public void Increment(int amount)
     {
         _level += amount;
+        _level = Mathf.Max(0, _level);
     }
 
 }
