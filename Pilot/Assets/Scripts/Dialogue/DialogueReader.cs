@@ -2,13 +2,15 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 public class DialogueReader : MonoBehaviour
 {
     public Character player;
 
-    public Text messageBody;
-    public Text[] choices;
+    [Header("UI References")]
+    public TextMeshProUGUI messageBody;
+    public TextMeshProUGUI[] choices;
 
     DialogueNode activeNode;
     bool awaitingInput;

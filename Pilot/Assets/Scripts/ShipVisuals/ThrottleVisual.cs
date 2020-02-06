@@ -22,6 +22,7 @@ public class ThrottleVisual : MonoBehaviour
 
     void UpdateRotation(float precentage, float targetSpeed)
     {
-        throttle.localEulerAngles = Vector3.Lerp(rotationMin, rotationMax, precentage);
+        if(throttle)
+            throttle.localEulerAngles = Vector3.Lerp(rotationMin, rotationMax, precentage);
     }
 }

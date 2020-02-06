@@ -31,6 +31,8 @@ public class JoystickVisual : MonoBehaviour
 
     void UpdateHorizontal(float precentage)
     {
+        if(joystick == null) return;
+
         // Remap value to 0 .. 1
         precentage += 1f;
         precentage /= 2f;
@@ -50,6 +52,8 @@ public class JoystickVisual : MonoBehaviour
 
     void UpdateVertical(float precentage)
     {
+        if(joystick == null) return;
+        
         // Remap value to 0 .. 1
         precentage += 1f;
         precentage /= 2f;

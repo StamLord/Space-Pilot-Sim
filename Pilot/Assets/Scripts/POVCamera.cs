@@ -43,38 +43,29 @@ public class POVCamera : MonoBehaviour
     {
         if(state) // Locked State
         {
-            // pov.m_VerticalAxis.m_MinValue = lockedVertical[0];
-            // pov.m_VerticalAxis.m_MaxValue = lockedVertical[1];
-
-            // pov.m_HorizontalAxis.m_MinValue = lockedHorizontal[0];
-            // pov.m_HorizontalAxis.m_MaxValue = lockedHorizontal[1];
-
-            // pov.m_VerticalAxis.m_MaxSpeed = lockedVSpeed;
-            // pov.m_HorizontalAxis.m_MaxSpeed = lockedHSpeed;
-
-            lockedCam.m_Priority = 100;
+            if(lockedCam)
+                lockedCam.m_Priority = 100;
+            
 
             // Wipe old cam values
-            lockedPov.m_VerticalAxis.Value = 0;
-            lockedPov.m_HorizontalAxis.Value = 0;
+            if(lockedPov)
+            {
+                lockedPov.m_VerticalAxis.Value = 0;
+                lockedPov.m_HorizontalAxis.Value = 0;
+            }
             
         } 
         else // Free Look State
         {
-            // pov.m_VerticalAxis.m_MinValue = freeVertical[0];
-            // pov.m_VerticalAxis.m_MaxValue = freeVertical[1];
-
-            // pov.m_HorizontalAxis.m_MinValue = freeHorizontal[0];
-            // pov.m_HorizontalAxis.m_MaxValue = freeHorizontal[1];
-
-            // pov.m_VerticalAxis.m_MaxSpeed = freeVSpeed;
-            // pov.m_HorizontalAxis.m_MaxSpeed = freeHSpeed;
-
-            lockedCam.m_Priority = 0;
+            if(lockedCam)
+                lockedCam.m_Priority = 0;
 
             // Wipe old cam values
-            freePov.m_VerticalAxis.Value = 0;
-            freePov.m_HorizontalAxis.Value = 0;
+            if(freePov)
+            {
+                freePov.m_VerticalAxis.Value = 0;
+                freePov.m_HorizontalAxis.Value = 0;
+            }
         }
     }
 }

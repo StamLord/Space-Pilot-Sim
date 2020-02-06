@@ -53,7 +53,7 @@ public class DialogueNode
     public string[] GetOptions(Character character)
     {
         List<string> optionMessages = new List<string>(); 
-
+        
         for(int i = 0; i < next.Length; i++)
         {
             if(next[i].requirement != null)
