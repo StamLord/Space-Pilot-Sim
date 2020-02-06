@@ -12,25 +12,17 @@ public class POVCamera : MonoBehaviour
     private CinemachinePOV freePov;
     private CinemachinePOV lockedPov;
 
-    // public float[] freeVertical = {-65, 20};
-    // public float[] freeHorizontal = {-60, 60};
-
-    // public float freeVSpeed = 300;
-    // public float freeHSpeed = 300;
-
-    // public float[] lockedVertical = {-5, 0};
-    // public float[] lockedHorizontal = {-10, 10};
-
-    // public float lockedVSpeed = 100;
-    // public float lockedHSpeed = 100;
-
     void Awake()
     {
         if(pi == null)
             pi = GetComponent<PilotInterface>();
 
         if(pi != null)
+        {
             pi.OnMousePiloting += LockMode;
+            pi.OnStartPiloting += StartPiloting;
+            pi.OnStopPiloting += StopPiloting;
+        }
             
         if(freeCam != null)
             freePov = freeCam.GetCinemachineComponent<CinemachinePOV>();
@@ -67,5 +59,16 @@ public class POVCamera : MonoBehaviour
                 freePov.m_HorizontalAxis.Value = 0;
             }
         }
+    }
+
+    void StartPiloting()
+    {
+        freeCam.m_Priority = 10;
+    }
+
+    void StopPiloting()
+    {
+        freeCam.m_Priority = 0;
+        lockedCam.m_Priority = 0;
     }
 }

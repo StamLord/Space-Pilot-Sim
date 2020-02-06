@@ -13,14 +13,16 @@ public class CharacterControls : MonoBehaviour {
 	public float jumpHeight = 2.0f;
 	private bool grounded = false;
 
-    private Rigidbody rigidbody;
-    public Transform camera;
+    private new Rigidbody rigidbody;
+    private new Transform camera;
 	public Collider interactionCollider;
 	
 	void Awake () {
         rigidbody = GetComponent<Rigidbody>();
 	    rigidbody.freezeRotation = true;
 	    rigidbody.useGravity = false;
+		
+		camera = Camera.main.transform;
 	}
 
 	public void ActivateRigidbody(bool active)
@@ -42,6 +44,16 @@ public class CharacterControls : MonoBehaviour {
 			if(seat)
 				seat.Enter(this);
 		}
+	}
+
+	void OnDisable()
+	{
+		GetComponent<CapsuleCollider>().enabled = false;
+	}
+
+	void OnEnable()
+	{
+		GetComponent<CapsuleCollider>().enabled = true;
 	}
 
     void Rotate()

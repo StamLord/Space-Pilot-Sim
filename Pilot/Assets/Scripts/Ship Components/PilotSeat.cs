@@ -18,6 +18,7 @@ public class PilotSeat : MonoBehaviour
         _seated = pilot;
         _seated.enabled = false;
         pi.enabled = true;
+        pi.StartPiloting();
 
         // Play Animation
         
@@ -34,6 +35,7 @@ public class PilotSeat : MonoBehaviour
         if(_seated)
         {
             _seated.enabled = true;
+            pi.StopPiloting();
             pi.enabled = false;
 
             // Play Animation

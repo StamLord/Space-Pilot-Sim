@@ -32,6 +32,12 @@ public class PilotInterface : MonoBehaviour
     public delegate void VerticalStrafeDelegate(float vertical);
     public event VerticalStrafeDelegate OnVerticalStrafe;
 
+    public delegate void StartPilotingDelegate();
+    public event StartPilotingDelegate OnStartPiloting;
+
+    public delegate void StopPilotingDelegate();
+    public event StopPilotingDelegate OnStopPiloting;
+
     public delegate void MousePilotingDelegate(bool state);
     public event MousePilotingDelegate OnMousePiloting;
 
@@ -162,5 +168,15 @@ public class PilotInterface : MonoBehaviour
         Debug.Log("Hijacked");
         if(OnSetThrottle != null)
             OnSetThrottle(setThrottle);
+    }
+
+    public void StartPiloting()
+    {
+        if(OnStartPiloting != null) OnStartPiloting();
+    }
+
+    public void StopPiloting()
+    {
+        if(OnStopPiloting != null) OnStopPiloting();
     }
 }
