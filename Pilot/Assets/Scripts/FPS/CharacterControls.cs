@@ -1,13 +1,13 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
  
 [RequireComponent (typeof (Rigidbody))]
 [RequireComponent (typeof (CapsuleCollider))]
  
-public class CharacterControls : MonoBehaviour {
+public class CharacterControls : GravityObject {
  
 	public float speed = 10.0f;
-	public float gravity = 10.0f;
 	public float maxVelocityChange = 10.0f;
 	public bool canJump = true;
 	public float jumpHeight = 2.0f;
@@ -16,6 +16,9 @@ public class CharacterControls : MonoBehaviour {
     private new Rigidbody rigidbody;
     private new Transform camera;
 	public Collider interactionCollider;
+
+	private List<IInteractable> nearbyInteractables = new List<IInteractable>();
+	private PilotSeat nearbySeat;
 	
 	void Awake () {
         rigidbody = GetComponent<Rigidbody>();
@@ -32,17 +35,45 @@ public class CharacterControls : MonoBehaviour {
 
     void Update()
     {
-        Rotate();
+		ProccessInput();
+        //Rotate();
     }
 
-	void OnTriggerStay(Collider other)
+	void OnTriggerEnter(Collider other)
+	{
+		PilotSeat seat = other.GetComponent<PilotSeat>();
+		if(seat)
+			nearbySeat = seat;
+
+		IInteractable interactable = other.GetComponent<IInteractable>();
+		if(interactable != null)
+			nearbyInteractables.Add(interactable);
+	}
+
+	void OnTriggerExit(Collider other)
+	{
+		PilotSeat seat = other.GetComponent<PilotSeat>();
+		if(seat == nearbySeat)
+			nearbySeat = null;
+
+		IInteractable interactable = other.GetComponent<IInteractable>();
+		if(interactable != null)
+			nearbyInteractables.Remove(interactable);
+	}
+
+	void ProccessInput()
 	{
 		if(Input.GetKeyDown(KeyCode.F))
 		{
-			// Find Nearby Seat
-			PilotSeat seat = other.GetComponent<PilotSeat>();
-			if(seat)
-				seat.Enter(this);
+			if(nearbySeat)
+				nearbySeat.Enter(this);
+		}
+
+		if(Input.GetKeyDown(KeyCode.E))
+		{
+
+			if(nearbyInteractables.Count != 0)
+				nearbyInteractables[0].Interact();
 		}
 	}
 
@@ -80,12 +111,15 @@ public class CharacterControls : MonoBehaviour {
  
 	        // Jump
 	        if (canJump && Input.GetButton("Jump")) {
-	            rigidbody.velocity = new Vector3(velocity.x, CalculateJumpVerticalSpeed(), velocity.z);
+				Vector3 localVelocity = transform.TransformDirection(rigidbody.velocity);
+	            rigidbody.velocity = transform.TransformVector(
+					new Vector3(localVelocity.x, 0, localVelocity.z));
+				rigidbody.velocity -= direction * CalculateJumpVerticalSpeed();
 	        }
 	    }
  
 	    // We apply gravity manually for more tuning control
-	    rigidbody.AddForce(new Vector3 (0, -gravity * rigidbody.mass, 0));
+	    rigidbody.AddForce(direction * intensity * rigidbody.mass);
  
 	    grounded = false;
 	}
@@ -97,6 +131,6 @@ public class CharacterControls : MonoBehaviour {
 	float CalculateJumpVerticalSpeed () {
 	    // From the jump height and gravity we deduce the upwards speed 
 	    // for the character to reach at the apex.
-	    return Mathf.Sqrt(2 * jumpHeight * gravity);
+	    return Mathf.Sqrt(2 * jumpHeight * intensity);
 	}
 }
