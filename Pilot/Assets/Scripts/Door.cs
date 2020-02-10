@@ -6,6 +6,8 @@ public class Door : MonoBehaviour
 {
     [SerializeField] private Vector3 openPosition;
     [SerializeField] private Vector3 closedPosition;
+    [SerializeField] private Vector3 openRotation;
+    [SerializeField] private Vector3 closedRotation;
     [SerializeField] private float speed = 0.01f;
     [SerializeField] private bool isOpen;
     [SerializeField] [Range(0,1)] private float percentage = 0;
@@ -47,11 +49,17 @@ public class Door : MonoBehaviour
         {
             percentage = newPercent;
             UpdatePosition();
+            UpdateRotation();
         }
     }
 
     void UpdatePosition()
     {
         transform.localPosition = Vector3.Lerp(closedPosition, openPosition, percentage);
+    }
+
+    void UpdateRotation()
+    {
+        transform.localRotation = Quaternion.Euler(Vector3.Lerp(closedRotation, openRotation, percentage));
     }
 }
