@@ -12,6 +12,7 @@ public class CharacterControls : GravityObject {
 	public bool canJump = true;
 	public float jumpHeight = 2.0f;
 	private bool grounded = false;
+	private Rigidbody platform;
 
     private new Rigidbody rigidbody;
     private new Transform camera;
@@ -19,6 +20,7 @@ public class CharacterControls : GravityObject {
 
 	private List<IInteractable> nearbyInteractables = new List<IInteractable>();
 	private PilotSeat nearbySeat;
+	private bool enabledThisFrame;
 	
 	void Awake () {
         rigidbody = GetComponent<Rigidbody>();
@@ -36,7 +38,9 @@ public class CharacterControls : GravityObject {
     void Update()
     {
 		ProccessInput();
-        //Rotate();
+		
+		if(enabledThisFrame)
+			enabledThisFrame = false;
     }
 
 	void OnTriggerEnter(Collider other)
@@ -63,6 +67,9 @@ public class CharacterControls : GravityObject {
 
 	void ProccessInput()
 	{
+		if(enabledThisFrame)
+			return;
+			
 		if(Input.GetKeyDown(KeyCode.F))
 		{
 			if(nearbySeat)
@@ -85,29 +92,47 @@ public class CharacterControls : GravityObject {
 	void OnEnable()
 	{
 		GetComponent<CapsuleCollider>().enabled = true;
+		enabledThisFrame = true;
 	}
 
     void Rotate()
     {
+		transform.up = -direction;
         Vector3 rot = transform.rotation.eulerAngles;
         rot.y = camera.rotation.eulerAngles.y;
         transform.rotation = Quaternion.Euler(rot);
     }
  
-	void FixedUpdate () {
+	void FixedUpdate () 
+	{
+		Rotate();
+
 	    if (grounded) {
 	        // Calculate how fast we should be moving
 	        Vector3 targetVelocity = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
+			
+			if(Input.GetKey(KeyCode.W))
+				targetVelocity.z = 1;
+			if(Input.GetKey(KeyCode.S))
+				targetVelocity.z = -1;
+			if(Input.GetKey(KeyCode.A))
+				targetVelocity.x = -1;
+			if(Input.GetKey(KeyCode.D))
+				targetVelocity.x = 1;
+
 	        targetVelocity = transform.TransformDirection(targetVelocity);
 	        targetVelocity *= speed;
+			Debug.DrawRay(transform.position, targetVelocity, Color.blue, 1f);
  
 	        // Apply a force that attempts to reach our target velocity
 	        Vector3 velocity = rigidbody.velocity;
+			velocity -= platform.velocity;
 	        Vector3 velocityChange = (targetVelocity - velocity);
 	        velocityChange.x = Mathf.Clamp(velocityChange.x, -maxVelocityChange, maxVelocityChange);
 	        velocityChange.z = Mathf.Clamp(velocityChange.z, -maxVelocityChange, maxVelocityChange);
 	        velocityChange.y = 0;
 	        rigidbody.AddForce(velocityChange, ForceMode.VelocityChange);
+			Debug.DrawRay(transform.position, velocityChange, Color.red, 1f);
  
 	        // Jump
 	        if (canJump && Input.GetButton("Jump")) {
@@ -120,12 +145,17 @@ public class CharacterControls : GravityObject {
  
 	    // We apply gravity manually for more tuning control
 	    rigidbody.AddForce(direction * intensity * rigidbody.mass);
+		Debug.DrawRay(transform.position, direction, Color.yellow, 1f);
+		
  
 	    grounded = false;
+		platform = null;
 	}
  
-	void OnCollisionStay () {
+	void OnCollisionStay (Collision collision) {
 	    grounded = true;    
+		if(collision.rigidbody)
+			platform = collision.rigidbody;
 	}
  
 	float CalculateJumpVerticalSpeed () {

@@ -5,7 +5,9 @@ using UnityEngine;
 public class PilotSeat : MonoBehaviour
 {
     [SerializeField] private CharacterControls _seated;
-    public PilotInterface pi;
+    [SerializeField] private PilotInterface pi;
+
+    [SerializeField] private Transform exitPoint;
 
     void Awake()
     {
@@ -22,8 +24,6 @@ public class PilotSeat : MonoBehaviour
 
         // Play Animation
         
-        // Change Camera
-
         // Parent
         _seated.ActivateRigidbody(false);
         _seated.transform.SetParent(transform);
@@ -40,11 +40,10 @@ public class PilotSeat : MonoBehaviour
 
             // Play Animation
 
-            // Change Camera
-
             // Unparent
             _seated.ActivateRigidbody(true);
             _seated.transform.SetParent(null);
+            _seated.transform.position = exitPoint.position;
             
             _seated = null;
         }
