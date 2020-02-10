@@ -53,6 +53,9 @@ public class SurvivalSystem : MonoBehaviour
         {
             breath.onSuffocate += Suffocate;
         }
+
+        if(character == null)
+            character = GetComponent<Character>();
     }
 
     void Update()
@@ -125,7 +128,6 @@ public class SurvivalSystem : MonoBehaviour
 
     void FreezingEffects()
     {
-        Debug.Log("Freezing");
         // Slow Movement
         // Deplete Health
         character.Damage(freezingDamage);
@@ -133,7 +135,6 @@ public class SurvivalSystem : MonoBehaviour
 
     void OverheathingEffects()
     {
-        Debug.Log("Overheating");
         // Dizziness
         // Slow Movement
         // Deplete Health
@@ -143,7 +144,6 @@ public class SurvivalSystem : MonoBehaviour
 
     void SuffocatingEffects()
     {
-        Debug.Log("Suffocating");
         // Tunnel Vision
         // Deplete Health
         character.Damage(suffocatingDamage);
