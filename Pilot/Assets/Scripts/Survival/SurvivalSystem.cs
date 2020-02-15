@@ -26,7 +26,6 @@ public class SurvivalSystem : MonoBehaviour
     public float hunger = 1;
     [Range(0,1)]
     public float thirst = 1;
-    
 
     private bool isFreezing;
     private bool isOverHeating;
@@ -34,9 +33,20 @@ public class SurvivalSystem : MonoBehaviour
     private bool isStarving;
     private bool isDehydrating;
 
-
     private float lastSurvivalUpdate;
     private float survivalUpdateRate = 1; // In seconds
+
+    public delegate void HungerChangeDelegate(float hunger);
+    public event HungerChangeDelegate OnHungerChange;
+
+    public delegate void ThirstChangeDelegate(float thirst);
+    public event ThirstChangeDelegate OnThirstChange;
+
+    public delegate void OxygenChangeDelegate(float oxygen);
+    public event OxygenChangeDelegate OnOxygenChange;
+
+    public delegate void BodyTempChangeDelegate(float bodyTemp);
+    public event BodyTempChangeDelegate OnBodyTempChange;
 
     void Awake()
     {
@@ -67,11 +77,18 @@ public class SurvivalSystem : MonoBehaviour
     {
         isFreezing = (temperature < freezingTemp);
         isOverHeating = (temperature > overheatTemp);
+        
+        if(OnBodyTempChange != null) OnBodyTempChange(temperature);
     }
 
     void Suffocate(float duration)
     {
         isSuffocating = (duration >= noAirTime);
+        if(OnOxygenChange != null)
+        {
+            float oxygenPercent = 1 - (duration / noAirTime);
+            OnOxygenChange(oxygenPercent);
+        }
     }
 
     void SurvivalUpdate()
@@ -111,6 +128,8 @@ public class SurvivalSystem : MonoBehaviour
             isStarving = true;
         else
             isStarving = false;
+
+        if(OnHungerChange != null) OnHungerChange(hunger);
     }
 
     void ThirstUpdate()
@@ -124,6 +143,8 @@ public class SurvivalSystem : MonoBehaviour
             isDehydrating = true;
         else
             isDehydrating = false;
+
+        if(OnThirstChange != null) OnThirstChange(thirst);
     }
 
     void FreezingEffects()

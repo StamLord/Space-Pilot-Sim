@@ -27,6 +27,9 @@ public class Character : MonoBehaviour
         new Stat(StatName.LUCK)
     };
 
+    public delegate void healthChangeDelegate(int health, int maxHealth);
+    public event healthChangeDelegate OnHealthChange;
+
     public void AddExperience(int amount)
     {
         exp += amount;
@@ -82,6 +85,7 @@ public class Character : MonoBehaviour
         if(amount < 0)
             Debug.LogWarning("Doing negative damage results in healing");
         health -= amount;
+        if(OnHealthChange != null) OnHealthChange(health, maxHealth);
     }
 
     public void Heal(int amount)
@@ -89,5 +93,6 @@ public class Character : MonoBehaviour
         if(amount < 0)
             Debug.LogWarning("Doing negative healing results in damage");
         health += amount;
+        if(OnHealthChange != null) OnHealthChange(health, maxHealth);
     }
 }
