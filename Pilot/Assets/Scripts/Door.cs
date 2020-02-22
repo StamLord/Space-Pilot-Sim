@@ -14,6 +14,8 @@ public class Door : MonoBehaviour
     [SerializeField] private Switch[] switches;
     [SerializeField] private Button[] buttons;
 
+    private Mesh mesh;
+
     void Awake()
     {
         foreach(Switch s in switches)  
@@ -61,5 +63,25 @@ public class Door : MonoBehaviour
     void UpdateRotation()
     {
         transform.localRotation = Quaternion.Euler(Vector3.Lerp(closedRotation, openRotation, percentage));
+    }
+
+    void OnDrawGizmos()
+    {
+        if(mesh == null)
+            mesh = GetComponent<MeshFilter>().sharedMesh;
+        if(mesh)
+        {
+            // Draw open position
+            Gizmos.color = Color.green;
+            Gizmos.DrawWireMesh(mesh, 
+            transform.parent.position + openPosition, 
+            Quaternion.Euler(transform.parent.rotation.eulerAngles + openRotation));
+
+            // Draw closed position
+            Gizmos.color = Color.red;
+            Gizmos.DrawWireMesh(mesh, 
+            transform.parent.position + closedPosition, 
+            Quaternion.Euler(transform.parent.rotation.eulerAngles + closedRotation));
+        }
     }
 }
