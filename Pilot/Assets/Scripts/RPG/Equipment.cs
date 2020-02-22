@@ -6,7 +6,7 @@ public class Equipment : Item
 {
     public EquipmentType equipmentType {get; private set;}
 
-    public Equipment(string name, string description, int cost, EquipmentType equipmentType) : base(name, description, cost)
+    public Equipment(string name, string description, int cost, Mesh model, EquipmentType equipmentType) : base(name, description, cost, model)
     {
         this.equipmentType = equipmentType;
     }

@@ -105,7 +105,7 @@ public class CharacterControls : GravityObject {
 		cameraRot.x = -mouseValue.y;
 		camera.localRotation = Quaternion.Euler(cameraRot);
 
-		Debug.DrawRay(transform.position, transform.up, Color.green, 1);
+		// Debug.DrawRay(transform.position, transform.up, Color.green, 1);
 		transform.Rotate(Vector3.up, mouseValue.x, Space.Self);
 	}
 
@@ -146,7 +146,7 @@ public class CharacterControls : GravityObject {
  
 	        // Jump
 	        if (canJump && Input.GetButton("Jump")) {
-				Vector3 localVelocity = transform.TransformDirection(rigidbody.velocity);
+				Vector3 localVelocity = transform.InverseTransformVector(rigidbody.velocity);
 	            rigidbody.velocity = transform.TransformVector(
 					new Vector3(localVelocity.x, 0, localVelocity.z));
 				rigidbody.velocity -= direction * CalculateJumpVerticalSpeed();

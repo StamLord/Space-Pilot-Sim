@@ -8,7 +8,7 @@ public class Consumable : Item
     public float waterValue {get; private set;}
     public int healthValue {get; private set;}
 
-    public Consumable(string name, string description, int cost, float hungerValue, float waterValue, int healthValue) : base(name, description, cost)
+    public Consumable(string name, string description, int cost, Mesh model, float hungerValue, float waterValue, int healthValue) : base(name, description, cost, model)
     {
         this.hungerValue = healthValue;
         this.waterValue = waterValue;
