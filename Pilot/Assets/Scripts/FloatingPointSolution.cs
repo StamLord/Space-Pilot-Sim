@@ -25,7 +25,7 @@ public class FloatingPointSolution : MonoBehaviour
         //cameraPosition.y = 0f;
         if (cameraPosition.magnitude > threshold)
         {
-            scaledSpace.FloatingOriginUpdate(cameraPosition);
+            if(scaledSpace) scaledSpace.FloatingOriginUpdate(cameraPosition);
 
             Object[] objects = FindObjectsOfType(typeof(Transform));
             foreach(Object o in objects)

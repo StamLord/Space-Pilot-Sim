@@ -47,6 +47,12 @@ public class PilotInterface : MonoBehaviour
     public delegate void OreMagnetDelegate();
     public event OreMagnetDelegate OnOreMagnet;
 
+    public delegate void EngageHyperDriveDelegate();
+    public event EngageHyperDriveDelegate OnEngageHyperDrive;
+
+    public delegate void ToggleHyperConsoleDelegate();
+    public event ToggleHyperConsoleDelegate OnToggleHyperConsole;
+
     bool rightClick;
 
     void Update()
@@ -65,16 +71,25 @@ public class PilotInterface : MonoBehaviour
         }
 
         if(Input.GetKey(KeyCode.Mouse0))
-        {
-            if(OnFire1 != null)
-                OnFire1();
-        }
+            if(OnFire1 != null) OnFire1();
 
         if(Input.GetKeyDown(KeyCode.M))
-        {
-            if(OnOreMagnet != null)
-                OnOreMagnet();
-        }
+            if(OnOreMagnet != null) OnOreMagnet();
+
+        if(Input.GetKeyDown(KeyCode.C))
+            if(OnCommunication != null) OnCommunication();
+
+        if(Input.GetKeyDown(KeyCode.T))
+            if(OnLockTarget != null) OnLockTarget();
+        
+        if(Input.GetKeyDown(KeyCode.F))
+            if(OnExit != null) OnExit();
+
+        if(Input.GetKeyDown(KeyCode.H))
+            if(OnToggleHyperConsole != null) OnToggleHyperConsole();
+
+        if(Input.GetKeyDown(KeyCode.KeypadEnter))
+            if(OnEngageHyperDrive != null) OnEngageHyperDrive();
     }
 
     public delegate void CommunicationDelegate();
@@ -117,7 +132,6 @@ public class PilotInterface : MonoBehaviour
             if(OnVerticalStrafe != null) OnVerticalStrafe(1);
         }
 
-
         // Yaw
         if(Input.GetKey(KeyCode.A))
         {
@@ -151,16 +165,6 @@ public class PilotInterface : MonoBehaviour
             if(OnBrake != null)
                 OnBrake();
         }
-
-        if(Input.GetKeyDown(KeyCode.C))
-            if(OnCommunication != null) OnCommunication();
-
-        if(Input.GetKeyDown(KeyCode.T))
-            if(OnLockTarget != null) OnLockTarget();
-        
-        if(Input.GetKeyDown(KeyCode.F))
-            if(OnExit != null) OnExit();
-
     }
 
     public void HiJack(float setThrottle)

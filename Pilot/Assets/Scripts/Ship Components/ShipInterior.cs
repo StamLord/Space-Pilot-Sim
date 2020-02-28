@@ -5,6 +5,7 @@ using UnityEngine;
 public class ShipInterior : MonoBehaviour
 {
     [SerializeField] private Transform interior;
+    public Transform GetInterior { get{return interior;}}
     Vector3 lastPostion;
     Vector3 lastRotation;
     float margin = .01f;

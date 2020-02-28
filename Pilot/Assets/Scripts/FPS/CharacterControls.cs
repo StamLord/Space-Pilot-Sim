@@ -18,15 +18,16 @@ public class CharacterControls : GravityObject {
     private new Rigidbody rigidbody;
     [SerializeField] private new Transform camera;
 	[SerializeField] private Vector2 verticalClamp = new Vector2(-90, 90);
-	[SerializeField] private Collider interactionCollider;
 
-	private List<IInteractable> nearbyInteractables = new List<IInteractable>();
-	private PilotSeat nearbySeat;
+	[SerializeField] private float interactionDistance = 1f;
+	[SerializeField] private IInteractable targetInteractable;
+	[SerializeField] private List<PilotSeat> nearbySeats = new List<PilotSeat>();
 	private bool enabledThisFrame;
 
 	private Vector3 targetVelocity;
 	
-	void Awake () {
+	void Awake () 
+	{
         rigidbody = GetComponent<Rigidbody>();
 	    rigidbody.freezeRotation = true;
 	    rigidbody.useGravity = false;
@@ -41,6 +42,7 @@ public class CharacterControls : GravityObject {
     {
 		OrientAgainstGravity();
 		ProccessInput();
+		FindInteractable();
 		
 		if(enabledThisFrame)
 			enabledThisFrame = false;
@@ -50,22 +52,14 @@ public class CharacterControls : GravityObject {
 	{
 		PilotSeat seat = other.GetComponent<PilotSeat>();
 		if(seat)
-			nearbySeat = seat;
-
-		IInteractable interactable = other.GetComponent<IInteractable>();
-		if(interactable != null)
-			nearbyInteractables.Add(interactable);
+			nearbySeats.Add(seat);
 	}
 
 	void OnTriggerExit(Collider other)
 	{
 		PilotSeat seat = other.GetComponent<PilotSeat>();
-		if(seat == nearbySeat)
-			nearbySeat = null;
-
-		IInteractable interactable = other.GetComponent<IInteractable>();
-		if(interactable != null)
-			nearbyInteractables.Remove(interactable);
+		if(seat)
+			nearbySeats.Remove(seat);
 	}
 
 	void ProccessInput()
@@ -84,15 +78,14 @@ public class CharacterControls : GravityObject {
 
 		if(Input.GetKeyDown(KeyCode.F) && enabledThisFrame == false)
 		{
-			if(nearbySeat)
-				nearbySeat.Enter(this);
+			PilotSeat nearestSeat = FindNearestSeat();
+			if(nearestSeat) nearestSeat.Enter(this);
 		}
 
 		if(Input.GetKeyDown(KeyCode.E))
 		{
-
-			if(nearbyInteractables.Count != 0)
-				nearbyInteractables[0].Interact();
+			if(targetInteractable != null)
+				targetInteractable.Interact();
 		}
 		
 		mouseValue += new Vector2(
@@ -107,6 +100,45 @@ public class CharacterControls : GravityObject {
 
 		// Debug.DrawRay(transform.position, transform.up, Color.green, 1);
 		transform.Rotate(Vector3.up, mouseValue.x, Space.Self);
+	}
+
+	void FindInteractable()
+	{
+		RaycastHit hit;
+		if(Physics.Raycast(Camera.main.ViewportPointToRay(new Vector2(.5f, .5f)), out hit, interactionDistance))
+		{
+			IInteractable interactable = hit.collider.GetComponent<IInteractable>();
+			if(interactable != null)
+			{
+				// Update UI
+				if(targetInteractable != interactable)
+					Debug.Log(hit.collider.name);
+					
+				targetInteractable = interactable;
+			}
+			else
+				targetInteractable = null;
+		}
+		else
+			targetInteractable = null;
+	}
+
+	PilotSeat FindNearestSeat()
+	{
+		PilotSeat nearest = null;
+		float distance = Mathf.Infinity;
+
+		foreach(PilotSeat seat in nearbySeats)
+		{
+			float d = Vector3.Distance(transform.position, seat.transform.position);
+			if(d < distance || nearest == null)
+			{
+				nearest = seat;
+				distance = d;
+			}
+		}
+
+		return nearest;
 	}
 
 	void OnDisable()

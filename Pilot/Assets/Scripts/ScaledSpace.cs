@@ -16,8 +16,16 @@ public class ScaledSpace : MonoBehaviour
 
     [SerializeField] private List<GameObject> spawned = new List<GameObject>();
 
+    void Awake()
+    {
+        if(cameraReal == null)
+            cameraReal = GameObject.FindGameObjectWithTag("MainCamera").transform;
+    }
+
     void Update()
     {
+        if(cameraReal == null) return;
+
         cameraScaled.localPosition = (cameraReal.position + traveledPosition) / scale;
         cameraScaled.rotation = cameraReal.rotation;
 
@@ -46,5 +54,5 @@ public class ScaledSpace : MonoBehaviour
             }
         }
     }
-    
+
 }

@@ -54,5 +54,6 @@ public enum WeaponType
 public enum AmmoType
 {
     KINETIC,
-    ENERGY
+    LASER,
+    PLASMA
 }
