@@ -95,7 +95,8 @@ public class HyperDrive : Component
         }
 
         CloseConsole();
-        HyperDriveManager.instance.EnterHyperSpace(gameObject, hyperTransition.material);
+        Vector3 position = Utility.StringToVector3(destination);
+        HyperDriveManager.instance.EnterHyperSpace(gameObject, position, hyperTransition.material);
     }
 
 }

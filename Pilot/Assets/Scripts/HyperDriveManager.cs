@@ -6,12 +6,17 @@ using UnityEngine.SceneManagement;
 public class HyperDriveManager : MonoBehaviour
 {
     [SerializeField] private float chargeTime = 5;
+    [SerializeField] private float timeInHyperSpace = 10;
     [SerializeField] private ParticleSystem[] particles;
     [SerializeField] private Camera[] cameras;
-    [SerializeField] private AnimationCurve fovCurve;
-    private float timer;
-    private float parTimer;
+    private float[] fovs;
+
+    [SerializeField] private float targetFov = 160;
+
     private float tranTimer;
+    
+    private GameObject ship;
+    private Vector3 exitPosition;
 
     #region  Singleton
     
@@ -24,69 +29,70 @@ public class HyperDriveManager : MonoBehaviour
             Destroy(this.gameObject);
         } 
         else
-        {
             instance = this;
-        }
-        
     }
     #endregion
 
     void Start()
     {
         DontDestroyOnLoad(gameObject);
+        fovs = new float[cameras.Length];
+        for (var i = 0; i < cameras.Length; i++)
+            fovs[i] = cameras[i].fieldOfView;
     }
 
-    public void EnterHyperSpace(GameObject ship)
+    public void EnterHyperSpace(GameObject ship, Vector3 exitPosition)
     {
         DontDestroyOnLoad(ship);
         DontDestroyOnLoad(ship.GetComponent<ShipInterior>().GetInterior.gameObject);
         DontDestroyOnLoad(Camera.main);
 
-        StartCoroutine("CameraEffect");
-        StartCoroutine("ParticlesEffect");
+        this.ship = ship;
+        this.exitPosition = exitPosition;
+        HyperDrive();
     }
     
-    public void EnterHyperSpace(GameObject ship, Material transition)
+    public void EnterHyperSpace(GameObject ship, Vector3 exitPosition, Material transition)
     {
-        EnterHyperSpace(ship);
+        EnterHyperSpace(ship, exitPosition);
         StartCoroutine("TransitionEffect", transition);
     }
 
-    IEnumerator CameraEffect()
+    private void HyperDrive()
     {
+        StartCoroutine("CameraEffect", false);
+        StartCoroutine("ExitHyperSpace");
+    }
+
+    IEnumerator CameraEffect(bool reversed = false)
+    {
+        float timer = 0;
         while(chargeTime > timer)
         {
-            for(int i=0;i<cameras.Length;i++)
-            {
-                cameras[i].fieldOfView = fovCurve.Evaluate(timer/chargeTime) / (i + 1);
-            }
-            // foreach(Camera cam in cameras)
-            //     cam.fieldOfView = fovCurve.Evaluate(timer/chargeTime);
+            for(int i=0; i<cameras.Length; i++)
+                if(reversed)
+                    cameras[i].fieldOfView = Mathf.Lerp(targetFov, fovs[i], timer / chargeTime);
+                else
+                    cameras[i].fieldOfView = Mathf.Lerp(fovs[i], targetFov, timer / chargeTime);
 
             yield return null;
             timer += Time.deltaTime;
         }
-
-        timer = 0;
-        SceneManager.LoadScene("HyperSpace", LoadSceneMode.Single);
+        //SceneManager.LoadScene("HyperSpace", LoadSceneMode.Single);
     }
 
-    IEnumerator ParticlesEffect()
+    private void ParticlesEffect(bool on)
     {
         foreach(ParticleSystem par in particles)
-            par.Play();
-
-        while(chargeTime > parTimer)
         {
-            foreach(ParticleSystem par in particles)
-                par.startSpeed = 100 /** parTimer / chargeTime + 20*/;
-
-            yield return null;
-            parTimer += Time.deltaTime;
+            if(on)
+            {
+                par.Play();
+                par.startSpeed = 100;
+            }
+            else
+                par.Stop();
         }
-
-        parTimer = 0;
-        
     }
 
     IEnumerator TransitionEffect(Material transition)
@@ -102,5 +108,23 @@ public class HyperDriveManager : MonoBehaviour
 
         tranTimer = 0;
         transition.SetColor("_EmissionColor", Color.black);
+    }
+
+    IEnumerator ExitHyperSpace()
+    {
+        float totalTime = 0;
+        ParticlesEffect(true);
+
+        while(totalTime < timeInHyperSpace + chargeTime)
+        {
+            yield return null;
+            totalTime += Time.deltaTime;
+        }
+        
+        ParticlesEffect(false);
+        StartCoroutine("CameraEffect", true);
+
+        //SceneManager.LoadScene("SampleScene", LoadSceneMode.Single);
+        ship.transform.position = exitPosition;
     }
 }

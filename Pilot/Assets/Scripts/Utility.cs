@@ -11,4 +11,14 @@ public static class Utility
         dec = Math.Round(dec, decimals);
         return dec;
     }
+
+    public static Vector3 StringToVector3(string str)
+    {
+        int third = str.Length / 3;
+        int x = int.Parse(str.Substring(0,third));
+        int y = int.Parse(str.Substring(third,third));
+        int z = int.Parse(str.Substring(third*2,third));
+
+        return new Vector3(x,y,z);
+    }
 }
