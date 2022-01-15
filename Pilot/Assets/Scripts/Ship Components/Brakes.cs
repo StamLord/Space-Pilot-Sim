@@ -33,6 +33,8 @@ public class Brakes : Component
 
         engine.Deccelerate();
         rb.AddForce(-brakeForce * rb.velocity);
+        //rb.velocity = Vector3.zero;
+        //rb.angularVelocity = Vector3.zero;
         Debug.DrawRay(transform.position, -brakeForce * rb.velocity, Color.blue, 1);
     }
 }
