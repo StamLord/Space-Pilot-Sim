@@ -4,8 +4,13 @@ using UnityEngine;
 
 public class FloatingPointSolution : MonoBehaviour
 {
-    public float threshold = 100.0f;
-    public float physicsThreshold = 1000.0f; // Set to zero to disable
+   
+
+    [SerializeField] private float threshold = 100.0f;
+    [SerializeField] private float physicsThreshold = 1000.0f; // Set to zero to disable
+
+    // The simulated world space position. Would be real position if we would not move with this script.
+    [SerializeField] private Vector3 sumPosition = Vector3.zero; 
 
     public ScaledSpace scaledSpace;
  
@@ -15,16 +20,33 @@ public class FloatingPointSolution : MonoBehaviour
     #else
     public float defaultSleepThreshold = 0.14f;
     #endif
- 
+    
     ParticleSystem.Particle[] parts = null;
- 
+    
+    public static FloatingPointSolution instance;
+    private void Awake() 
+    {
+        if(instance == null)   
+            instance = this;
+        else
+            Debug.LogWarning("More than 1 instance detected for FloatingPointSolution: " + instance.gameObject.name);
+    }
+    
+    public Vector3 GetSimulatedSpacePosition(Vector3 position)
+    {
+        return sumPosition + position;
+    }
+
     void LateUpdate()
     {
 
         Vector3 cameraPosition = gameObject.transform.position;
         //cameraPosition.y = 0f;
+
+        // Offset all objects back to around origin (0,0,0)
         if (cameraPosition.magnitude > threshold)
         {
+            sumPosition += cameraPosition;
             if(scaledSpace) scaledSpace.FloatingOriginUpdate(cameraPosition);
 
             Object[] objects = FindObjectsOfType(typeof(Transform));
@@ -32,9 +54,7 @@ public class FloatingPointSolution : MonoBehaviour
             {
                 Transform t = (Transform)o;
                 if (t.parent == null)
-                {
                     t.position -= cameraPosition;
-                }
             }
             
             #if SUPPORT_OLD_PARTICLE_SYSTEM
@@ -45,14 +65,12 @@ public class FloatingPointSolution : MonoBehaviour
                 ParticleEmitter pe = (ParticleEmitter)o;
  
                 // if the particle is not in world space, the logic above should have moved them already
-		if (!pe.useWorldSpace)
-		    continue;
- 
+                if (!pe.useWorldSpace)
+                    continue;
+    
                 Particle[] emitterParticles = pe.particles;
                 for(int i = 0; i < emitterParticles.Length; ++i)
-                {
                     emitterParticles[i].position -= cameraPosition;
-                }
                 pe.particles = emitterParticles;
             }
             #endif
@@ -78,18 +96,16 @@ public class FloatingPointSolution : MonoBehaviour
                     sys.Pause ();
         
                 // ensure a sufficiently large array in which to store the particles
-                if (parts == null || parts.Length < particlesNeeded) {		
+                if (parts == null || parts.Length < particlesNeeded)	
                     parts = new ParticleSystem.Particle[particlesNeeded];
-                }
  
                 // now get the particles
                 int num = sys.GetParticles(parts);
         
-                for (int i = 0; i < num; i++) {
+                for (int i = 0; i < num; i++) 
                     parts[i].position -= cameraPosition;
-                }
  
-		        sys.SetParticles(parts, num);
+                sys.SetParticles(parts, num);
  
                 if (wasPlaying)
                     sys.Play ();

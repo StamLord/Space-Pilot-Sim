@@ -73,8 +73,6 @@ public class HUD : MonoBehaviour
 
     void TemperatureUpdate(float temp)
     {
-        decimal dec = Convert.ToDecimal(temp);
-        dec = Math.Round(dec, 2);
-        temperature.text = dec + "c";
+        temperature.text = Utility.FloatToDecimal(temp, 2) + "c";
     }
 }

@@ -53,6 +53,9 @@ public class PilotInterface : MonoBehaviour
     public delegate void ToggleHyperConsoleDelegate();
     public event ToggleHyperConsoleDelegate OnToggleHyperConsole;
 
+    public delegate void ShowFlightInstructionsDelegate();
+    public event ShowFlightInstructionsDelegate OnShowFlightInstructions;
+
     bool rightClick;
 
     void Update()
@@ -90,6 +93,9 @@ public class PilotInterface : MonoBehaviour
 
         if(Input.GetKeyDown(KeyCode.KeypadEnter))
             if(OnEngageHyperDrive != null) OnEngageHyperDrive();
+
+        if(Input.GetKeyDown(KeyCode.I))
+            if(OnShowFlightInstructions != null) OnShowFlightInstructions();
     }
 
     public delegate void CommunicationDelegate();
@@ -160,6 +166,7 @@ public class PilotInterface : MonoBehaviour
                 OnPitch(Input.GetAxis("Vertical"));
         }
 
+        // Brakes
         if(Input.GetKey(KeyCode.Space))
         {
             if(OnBrake != null)
