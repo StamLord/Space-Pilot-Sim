@@ -29,8 +29,8 @@ public class CharacterControls : GravityObject {
 	void Awake () 
 	{
         rigidbody = GetComponent<Rigidbody>();
-	    rigidbody.freezeRotation = true;
-	    rigidbody.useGravity = false;
+		rigidbody.freezeRotation = true;
+		rigidbody.useGravity = false;
 	}
 
 	public void ActivateRigidbody(bool active)
@@ -160,44 +160,57 @@ public class CharacterControls : GravityObject {
 	
 	void FixedUpdate () 
 	{
-	    if (grounded) 
+		if (grounded) 
 		{
-	        targetVelocity = transform.TransformDirection(targetVelocity);
-	        targetVelocity *= speed;
-			Debug.DrawRay(transform.position, targetVelocity, Color.blue, 1f);
- 
-	        // Apply a force that attempts to reach our target velocity
-	        Vector3 velocity = rigidbody.velocity;
+			RigidMovement();
 
-	        Vector3 velocityChange = transform.InverseTransformVector(targetVelocity - velocity);
-	        velocityChange.x = Mathf.Clamp(velocityChange.x, -maxVelocityChange, maxVelocityChange);
-	        velocityChange.z = Mathf.Clamp(velocityChange.z, -maxVelocityChange, maxVelocityChange);
-	        velocityChange.y = 0;
-	        rigidbody.AddRelativeForce(velocityChange, ForceMode.VelocityChange);
-			Debug.DrawRay(transform.position, velocityChange, Color.red, 1f);
- 
 	        // Jump
-	        if (canJump && Input.GetButton("Jump")) {
+			if (canJump && Input.GetButton("Jump")) 
+			{
 				Vector3 localVelocity = transform.InverseTransformVector(rigidbody.velocity);
-	            rigidbody.velocity = transform.TransformVector(
+				rigidbody.velocity = transform.TransformVector(
 					new Vector3(localVelocity.x, 0, localVelocity.z));
 				rigidbody.velocity -= direction * CalculateJumpVerticalSpeed();
-	        }
-	    }
- 
+			}
+		}
+
 	    // We apply gravity manually for more tuning control
 	    rigidbody.AddForce(direction * intensity * rigidbody.mass);
 		Debug.DrawRay(transform.position, direction, Color.yellow, 1f);
 		
-	    grounded = false;
-		//platform = null;
+		grounded = false;
+	}
+
+	private void RigidMovement()
+	{
+		Vector3 worldSpaceVelocity = transform.TransformDirection(targetVelocity);
+		worldSpaceVelocity *= speed;
+		Debug.DrawRay(transform.position, worldSpaceVelocity, Color.blue, 1f);
+
+		// Apply a force that attempts to reach our target velocity
+		Vector3 velocity = rigidbody.velocity;
+
+		Vector3 velocityChange = worldSpaceVelocity - velocity;
+		velocityChange.x = Mathf.Clamp(velocityChange.x, -maxVelocityChange, maxVelocityChange);
+		velocityChange.z = Mathf.Clamp(velocityChange.z, -maxVelocityChange, maxVelocityChange);
+		velocityChange.y = 0;
+		rigidbody.AddForce(velocityChange, ForceMode.VelocityChange);
+		Debug.DrawRay(transform.position, velocityChange, Color.red, 1f);
+	}
+
+	private void TransformMovement()
+	{
+		Vector3 worldSpaceVelocity = transform.TransformDirection(targetVelocity);
+		rigidbody.MovePosition(rigidbody.position + worldSpaceVelocity * .1f);
+	}
+
+	void OnCollisionStay (Collision collision) 
+	{
+		grounded = true;    
 	}
  
-	void OnCollisionStay (Collision collision) {
-	    grounded = true;    
-	}
- 
-	float CalculateJumpVerticalSpeed () {
+	float CalculateJumpVerticalSpeed () 
+	{
 	    // From the jump height and gravity we deduce the upwards speed 
 	    // for the character to reach at the apex.
 	    return Mathf.Sqrt(2 * jumpHeight * intensity);
