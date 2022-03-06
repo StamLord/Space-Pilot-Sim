@@ -7,6 +7,10 @@ public class GravityObject : MonoBehaviour
     [SerializeField] protected new Rigidbody rigidbody;
     [SerializeField] protected Vector3 direction;
     [SerializeField] protected float intensity;
+    [SerializeField] protected bool useMass = true;
+
+    public Vector3 Direction {get{return direction;}}
+    public float Intensity {get{return intensity;}}
 
     private List<GravityArea> areasInContact = new List<GravityArea>();
     
@@ -52,7 +56,16 @@ public class GravityObject : MonoBehaviour
 
     void FixedUpdate()
     {
-        rigidbody.AddForce(direction * intensity * rigidbody.mass);
+        ApplyGravity();
+    }
+
+    void ApplyGravity()
+    {
+        Vector3 gravity = direction * intensity;
+        if(useMass)
+            gravity *= rigidbody.mass;
+    
+        rigidbody.AddForce(gravity);
     }
 
 }

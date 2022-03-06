@@ -5,8 +5,10 @@ using System.Collections.Generic;
 [RequireComponent (typeof (Rigidbody))]
 [RequireComponent (typeof (CapsuleCollider))]
  
-public class CharacterControls : GravityObject {
- 
+public class CharacterControls : MonoBehaviour
+{
+	[SerializeField] private GravityObject gravityObject;
+
 	[SerializeField] private float speed = 10.0f;
 	[SerializeField] private float maxVelocityChange = 10.0f;
 	[SerializeField] private bool canJump = true;
@@ -154,13 +156,13 @@ public class CharacterControls : GravityObject {
 
     void OrientAgainstGravity()
     {
-		if(direction != Vector3.zero)
-			transform.up = -direction;
+		if(gravityObject.Direction != Vector3.zero)
+			transform.up = -gravityObject.Direction;
     }
 	
 	void FixedUpdate () 
 	{
-		if (grounded) 
+		if (grounded)  //grounded
 		{
 			RigidMovement();
 
@@ -170,13 +172,11 @@ public class CharacterControls : GravityObject {
 				Vector3 localVelocity = transform.InverseTransformVector(rigidbody.velocity);
 				rigidbody.velocity = transform.TransformVector(
 					new Vector3(localVelocity.x, 0, localVelocity.z));
-				rigidbody.velocity -= direction * CalculateJumpVerticalSpeed();
+				rigidbody.velocity -= gravityObject.Direction * CalculateJumpVerticalSpeed();
 			}
 		}
 
-	    // We apply gravity manually for more tuning control
-	    rigidbody.AddForce(direction * intensity * rigidbody.mass);
-		Debug.DrawRay(transform.position, direction, Color.yellow, 1f);
+		Debug.DrawRay(transform.position, gravityObject.Direction, Color.yellow, 1f);
 		
 		grounded = false;
 	}
@@ -192,8 +192,8 @@ public class CharacterControls : GravityObject {
 
 		Vector3 velocityChange = worldSpaceVelocity - velocity;
 		velocityChange.x = Mathf.Clamp(velocityChange.x, -maxVelocityChange, maxVelocityChange);
+		velocityChange.y = Mathf.Clamp(velocityChange.y, -maxVelocityChange, maxVelocityChange);;
 		velocityChange.z = Mathf.Clamp(velocityChange.z, -maxVelocityChange, maxVelocityChange);
-		velocityChange.y = 0;
 		rigidbody.AddForce(velocityChange, ForceMode.VelocityChange);
 		Debug.DrawRay(transform.position, velocityChange, Color.red, 1f);
 	}
@@ -213,6 +213,6 @@ public class CharacterControls : GravityObject {
 	{
 	    // From the jump height and gravity we deduce the upwards speed 
 	    // for the character to reach at the apex.
-	    return Mathf.Sqrt(2 * jumpHeight * intensity);
+	    return Mathf.Sqrt(2 * jumpHeight * gravityObject.Intensity);
 	}
 }
