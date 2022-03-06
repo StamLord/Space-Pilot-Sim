@@ -42,7 +42,7 @@ public class PilotSeat : MonoBehaviour
 
             // Unparent
             _seated.ActivateRigidbody(true);
-            _seated.transform.SetParent(null);
+            _seated.transform.SetParent(transform.parent); // Ship interior
             _seated.transform.position = exitPoint.position;
             
             _seated = null;
