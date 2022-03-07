@@ -4,15 +4,30 @@ using UnityEngine;
 
 public class GravityArea : MonoBehaviour
 {
+    public enum GravityType {TransformDown, TransformCenter}
+    [SerializeField] private GravityType gravityType;
     [SerializeField] private Rigidbody rigidParent;
+    [SerializeField] private Transform interior;
     [SerializeField] private float intensity = 10f;
     [SerializeField] private List<GravityObject> objects = new List<GravityObject>();
+
+    public Transform Interior {get{return interior;}}
 
     void FixedUpdate()
     {
         foreach(GravityObject o in objects)
         {
-            o.SetGravity(-transform.up, intensity);
+            Debug.DrawLine(transform.position, transform.position + transform.up);
+
+            switch(gravityType)
+            {
+                case GravityType.TransformDown:
+                    o.SetGravity(-transform.up, intensity);
+                    break;
+                case GravityType.TransformCenter:
+                    o.SetGravity((transform.position - o.transform.position).normalized, intensity);
+                    break;
+            }
         }
     }
 
@@ -22,7 +37,6 @@ public class GravityArea : MonoBehaviour
         if(go)
         {
             go.AddContact(this);
-            go.SetInterior(transform.parent);
             objects.Add(go);
         }
     }
@@ -39,7 +53,6 @@ public class GravityArea : MonoBehaviour
             {
                 go.SetGravity(-transform.up, 0f);
                 go.SetVelocity(rigidParent.velocity);
-                go.SetInterior(null);
             }
         }
     }

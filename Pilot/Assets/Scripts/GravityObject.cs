@@ -24,6 +24,8 @@ public class GravityObject : MonoBehaviour
     {
         if(areasInContact.Contains(area) == false)
             areasInContact.Add(area);
+        
+        SetInterior(area.Interior);
     }
 
     public void RemoveContact(GravityArea area)
@@ -35,6 +37,12 @@ public class GravityObject : MonoBehaviour
     public int GetAreaContacts()
     {
         return areasInContact.Count;
+    }
+
+    private void UpdateInterior()
+    {
+        if(GetAreaContacts() < 1)
+            SetInterior(null);
     }
 
     public void SetInterior(Transform interior)
@@ -56,6 +64,7 @@ public class GravityObject : MonoBehaviour
 
     void FixedUpdate()
     {
+        UpdateInterior();
         ApplyGravity();
     }
 
