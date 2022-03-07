@@ -4,15 +4,15 @@ using UnityEngine;
 
 public class OxygenArea : MonoBehaviour
 {
-    [SerializeField] private bool localOxygen;
-    [SerializeField] private bool defaultOxygen;
+    [SerializeField] private bool oxygen;
+    public bool Oxygen {get{return oxygen;}}
     
     void OnTriggerEnter(Collider other)
     {
         Breather br = other.GetComponent<Breather>();
         if(br)
         {
-            br.SetBreathing(localOxygen);
+            br.EnterOxygenArea(this);
         }
     }
 
@@ -21,7 +21,7 @@ public class OxygenArea : MonoBehaviour
         Breather br = other.GetComponent<Breather>();
         if(br)
         {
-            br.SetBreathing(defaultOxygen);
+            br.ExitOxygenArea(this);
         }
     }
 }

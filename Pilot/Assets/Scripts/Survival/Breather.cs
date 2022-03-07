@@ -6,10 +6,12 @@ public class Breather : MonoBehaviour
 {
     [SerializeField] 
     private bool isBreathing;
-    // [SerializeField] [Tooltip("Time in seconds before suffocation")]
-    // private float noAirTime = 90;
+    
     [SerializeField] 
     private float lastBreath;
+
+    [SerializeField] 
+    private List<OxygenArea> oxygenAreas;
 
     public delegate void breathChangeDelegate(bool state);
     public event breathChangeDelegate onBreathChange;
@@ -17,15 +19,47 @@ public class Breather : MonoBehaviour
     public delegate void suffocateDelegate(float duration);
     public event suffocateDelegate onSuffocate;
 
-    public void SetBreathing(bool state)
+    public void EnterOxygenArea(OxygenArea area)
+    {
+        oxygenAreas.Add(area);
+    }
+
+    public void ExitOxygenArea(OxygenArea area)
+    {
+        if(oxygenAreas.Contains(area))
+            oxygenAreas.Remove(area);
+    }
+
+    private void SetBreathing(bool state)
     {
         isBreathing = state;
         if(onBreathChange != null) 
             onBreathChange(isBreathing);
     }
 
+    private void UpdateBreathing()
+    {
+        if(oxygenAreas.Count == 0)
+        {   
+            SetBreathing(false);
+            return;
+        }
+
+        foreach(OxygenArea o in oxygenAreas)
+        {
+            if(o.Oxygen)
+            {
+                SetBreathing(true);
+                return;
+            }
+        }
+        
+        SetBreathing(false);
+    }
+
     void Update()
     {
+        UpdateBreathing();
         Suffocate();
     }
 
