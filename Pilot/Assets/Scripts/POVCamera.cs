@@ -38,10 +38,13 @@ public class POVCamera : MonoBehaviour
             if(lockedCam)
                 lockedCam.m_Priority = 100;
             
-
+            return;
             // Wipe old cam values
             if(lockedPov)
             {
+                freePov.m_VerticalAxis.Value = lockedPov.m_VerticalAxis.Value;
+                freePov.m_HorizontalAxis.Value = lockedPov.m_HorizontalAxis.Value;
+
                 lockedPov.m_VerticalAxis.Value = 0;
                 lockedPov.m_HorizontalAxis.Value = 0;
             }
