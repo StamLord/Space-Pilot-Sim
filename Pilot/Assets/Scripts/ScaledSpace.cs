@@ -47,12 +47,18 @@ public class ScaledSpace : MonoBehaviour
             if(spawned.Contains(c.gameObject) == false)
             {
                 spawned.Add(c.gameObject);
-                c.transform.localPosition =  (c.transform.localPosition - cameraScaled.localPosition) * scale;
+                Debug.Log((c.transform.localPosition - cameraScaled.localPosition) * scale);
+                c.transform.position = (c.transform.localPosition - cameraScaled.localPosition) * scale;
                 c.transform.parent = null;
                 c.transform.localScale *= scale;
                 c.gameObject.layer = 0;
             }
         }
+    }
+
+    private void OnDrawGizmos() 
+    {
+        Gizmos.DrawWireSphere(cameraScaled.position, spawnRadius);
     }
 
 }
